@@ -1,0 +1,25 @@
+development:
+  adapter: "postgresql"
+  database: socket_game_development
+  username:
+  password:
+  encoding: utf8
+  host: localhost
+  port: 5432
+
+test:
+  adapter: 'postgresql'
+  database: socket_game_test
+  username:
+  password:
+  encoding: utf8
+  host: localhost
+  port: 5432
+
+production:
+  adapter: 'postgresql'
+  database: socket_game_production
+  username:
+  password:
+  encoding: utf8
+  host: nope

@@ -1,0 +1,20 @@
+#controller
+  #message
+  #joining
+    #h1 Bei einem Spiel mitmachen
+
+    %form#join
+      = label_tag :code
+      = text_field_tag :code, "", required: true
+      = label_tag :name
+      = text_field_tag :name, "", required: true
+
+      %button Mitmachen
+  #chooseCategory
+  #question
+    %form#lie
+      = label_tag :lie, 'Deine Antwort'
+      = text_field_tag :lie, "", required: true
+
+      %button Antwort abgeben
+  %ul#answers
