@@ -1,24 +1,30 @@
 class GameChannel < ApplicationCable::Channel
 
+  @@lies = {}
+  @@answers = {}
+
   def subscribed
     stream_from "game_#{params[:room]}"
   end
 
   def connect(data)
-    if !Game.find_by(code: params[:room])
-      ActionCable.server.broadcast "game_#{params[:room]}", name: data['name'], action: 'connect', room: params[:room]
+    unless User.find_by(token: data['token'])
+      user = User.create(name: data['name'], token: data['token'])
+      if !Game.find_by(code: params[:room])
+        ActionCable.server.broadcast "game_#{params[:room]}", user: user.to_json, action: 'connect', room: params[:room]
+      end
     end
   end
 
   def start(users)
-    user_data = {}
-    users["users"].each{|u| user_data[u] = { points: 0, current_answer: '', current_lie: '' } }
-    Game.create(code: params[:room], users: user_data)
+    users = User.find(users["users"])
+    game = Game.create(code: params[:room])
+    users.each{|user|user.update_attributes(game_id: game.id)}
     questions = Question.limit(5).order("RANDOM()")
-    ActionCable.server.broadcast "game_#{params[:room]}", action: 'start', questions: questions.map{|q| {id: q.id, name: q.category}}, user: user_data.keys.sample, users: user_data
+    ActionCable.server.broadcast "game_#{params[:room]}", action: 'start', questions: questions.map{|q| {id: q.id, name: q.category}}, user: users.sample.id, users: users.map(&:to_json)
   end
 
-  def chooseCategory(data)
+  def chooseQuestion(data)
     game = Game.find_by(code: params[:room])
     question = Question.find(data['question_id'])
     game.questions << question
@@ -26,25 +32,21 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def lie(data)
+    ActionCable.server.broadcast "game_#{params[:room]}", action: 'newLie', user: data['user_id']
+    @@lies[data['user_id']] = data['text']
     game = Game.find_by(code: params[:room])
-    game.users[params['name']]['current_lie'] = data['text']
-    game.save
-    question = Question.find(data['question_id'])
-    ActionCable.server.broadcast "game_#{params[:room]}", action: 'newAnswer', user: params['name']
-    if game.all_lied?
-      ActionCable.server.broadcast "game_#{params[:room]}", action: 'answersComplete', answers: game.answers(question)
+    if game.all_lied?(@@lies)
+      ActionCable.server.broadcast "game_#{params[:room]}", action: 'liesComplete', answers: game.answers(@@lies).shuffle
     end
   end
 
 
   def answer(data)
+    ActionCable.server.broadcast "game_#{params[:room]}", action: 'newAnswer', user: data['user_id']
     game = Game.find_by(code: params[:room])
-    game.users[params['name']]['current_answer'] = data['text']
-    game.save
-    question = Question.find(data['question_id'])
-    if game.all_lied?
-      ActionCable.server.broadcast "game_#{params[:room]}", action: 'questionComplete'
-      game.reset_question
+    @@answers[data['user_id']] = data['text']
+    if game.all_answered?(@@answers)
+      ActionCable.server.broadcast "game_#{params[:room]}", action: 'answersComplete'
     end
   end
 

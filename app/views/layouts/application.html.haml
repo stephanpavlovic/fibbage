@@ -1,0 +1,24 @@
+!!!
+%html
+  %head
+    = csrf_meta_tags
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+
+    = favicon_link_tag
+    = favicon_link_tag 'apple-touch-icon.png', rel: 'apple-touch-icon', type: 'image/png', sizes: '180x180'
+    = favicon_link_tag 'safari-pinned-tab.svg', rel: 'mask-icon', color: '#5bbad5'
+
+    %title= meta_title
+    %meta{ name: 'title', content: meta_title }
+    %meta{ name: 'description', content: meta_description}
+    %meta{ property: 'og:site_name', content: t('common.project_title') }
+    %meta{ property: 'og:title', content: meta_title }
+    %meta{ property: 'og:url', content: "#{request.base_url}#{request.path}" }
+    %meta{ property: 'og:locale', content: 'en_GB' }
+    %meta{ property: 'og:type', content: 'website' }
+    %meta{ property: 'og:description', content: meta_description }
+    %meta{ :name => "viewport", :content => "width=device-width, initial-scale=1.0" }
+  %body{ class: "#{controller_name}_#{action_name}" }
+    .b-content
+      = yield

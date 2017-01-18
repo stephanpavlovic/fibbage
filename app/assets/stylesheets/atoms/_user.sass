@@ -1,0 +1,23 @@
+.a-user
+  font-size: 20px
+  padding: 10px
+  border: 1px solid black
+  display: flex
+  margin-bottom: 5px
+  line-height: 20px
+  &:before
+    content: ''
+    display: inline-block
+    width: 20px
+    height: 20px
+    border-radius: 50%
+    border: 1px solid black
+    margin-right: 5px
+  .a-user--name
+    flex: 1
+  &.as-lied
+    &:before
+      background: green
+  &.as-answered
+    &:before
+      background: yellow

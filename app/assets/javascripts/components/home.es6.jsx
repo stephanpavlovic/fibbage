@@ -6,7 +6,9 @@ class Home extends React.Component {
       code: '',
       action: 'connect',
       userForCategory: '',
-      questions: []
+      questions: [],
+      currentLies: [],
+      currentAnswers: []
     };
   }
 
@@ -15,28 +17,60 @@ class Home extends React.Component {
     if(action == 'connect'){
       this.setState({
         action: action,
-        users:
+        users: this.state.users.concat(JSON.parse(data.user))
       })
     }
     if(action == 'start'){
+      let newUsers = []
+      let activeUser = null
+      data.users.forEach(function(user){
+        let userData = JSON.parse(user)
+        newUsers.push(userData)
+        if(userData.id == data.user){
+          activeUser = userData.name
+        }
+      })
       this.setState({
         action: action,
-        questions: data.questions
+        users: newUsers,
+        questions: data.questions,
+        userForCategory: activeUser,
+        userForCategoryId: data.user
       })
     }
     if(action == 'newQuestion'){
       this.setState({
         action: action,
         currentQuestion: JSON.parse(data.question),
-        userForCategory: data.user
+        userForCategory: data.user,
+        currentLies: [],
+        currentAnswers: null
+      })
+    }
+    if(action == 'newLie'){
+      this.setState({
+        action: action,
+        currentLies: this.state.currentLies.concat(data.user).sort()
+      })
+    }
+    if(action == 'liesComplete'){
+      this.setState({
+        action: action,
+        currentAnswers: data.answers
       })
     }
     if(action == 'newAnswer'){
       this.setState({
         action: action,
-        userForCategory: data.user
+        userAnswers: this.state.currentAnswers.concat(data.user).sort()
       })
     }
+    if(action == 'answersComplete'){
+      this.setState({
+        action: action
+      })
+    }
+
   }
 
   componentWillMount() {
@@ -46,7 +80,7 @@ class Home extends React.Component {
         connected: function() {},
         disconnected: function() {},
         received: function(data) {
-          console.log('Received', data, that)
+          console.log('Game Received', data)
           that.handleReceivedData(data)
         }
       });
@@ -57,24 +91,30 @@ class Home extends React.Component {
   }
 
   allPlayersIn(){
-    console.log("allPlayersIn", this.state.room)
-    this.state.room.perform('start', { users: this.state.users })
+    let userIds = []
+    this.state.users.forEach(function(user){
+      userIds.push(user.id)
+    })
+    this.state.room.perform('start', { users: userIds })
   }
 
   render () {
-    let screen = "";
+    let screen = this.state.currentQuestion ? <Question question={ this.state.currentQuestion.question } action={ this.state.action } answers={ this.state.currentAnswers } /> : ''
+
     if(this.state.action == 'connect'){
       screen =<HomeJoin code={ this.props.code } userCount={ this.state.users.length } allPlayersIn={ this.allPlayersIn.bind(this) }/>
     }
     if(this.state.action == 'start'){
       screen = <CategoryOptions questions={ this.state.questions } user={ this.state.userForCategory }/>
     }
-    if(this.state.action == 'newQuestion'){
-      screen = <Question data={ this.state.currentQuestion } status={ this.state.action } />
+
+    if(this.state.action == 'answersComplete'){
+      screen = <Points/>
     }
+
     return <div>
       { this.props.code && screen}
-      <UserList users={ this.state.users } activeUser={ this.state.userForCategory }/>
+      <UserList users={ this.state.users } activeUser={ this.state.userForCategory } currentLies={ this.state.currentLies } currentAnswers={this.state.currentAnswers} action={ this.state.action }/>
     </div>;
   }
 }
