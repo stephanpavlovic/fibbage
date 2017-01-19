@@ -7,8 +7,10 @@ class Home extends React.Component {
       action: 'connect',
       userForCategory: '',
       questions: [],
+      questionCount: 0,
       currentLies: [],
-      currentAnswers: []
+      currentAnswers: [],
+      userAnswers: []
     };
   }
 
@@ -42,6 +44,7 @@ class Home extends React.Component {
       this.setState({
         action: action,
         currentQuestion: JSON.parse(data.question),
+        questionCount: this.state.questionCount + 1,
         userForCategory: data.user,
         currentLies: [],
         currentAnswers: null
@@ -62,12 +65,14 @@ class Home extends React.Component {
     if(action == 'newAnswer'){
       this.setState({
         action: action,
-        userAnswers: this.state.currentAnswers.concat(data.user).sort()
+        userAnswers: this.state.userAnswers.concat(data.user).sort()
       })
     }
     if(action == 'answersComplete'){
       this.setState({
-        action: action
+        action: action,
+        users: JSON.parse(data.users),
+        currentPoints: data.points
       })
     }
 
@@ -98,8 +103,12 @@ class Home extends React.Component {
     this.state.room.perform('start', { users: userIds })
   }
 
+  timerComplete(){
+    this.state.room.perform('complete', {})
+  }
+
   render () {
-    let screen = this.state.currentQuestion ? <Question question={ this.state.currentQuestion.question } action={ this.state.action } answers={ this.state.currentAnswers } /> : ''
+    let screen = this.state.currentQuestion ? <Question question={ this.state.currentQuestion.question } showHint={this.state.questionCount == 1 && this.state.action == 'newQuestion'} action={ this.state.action } answers={ this.state.currentAnswers } timerComplete={ this.timerComplete.bind(this) }/> : ''
 
     if(this.state.action == 'connect'){
       screen =<HomeJoin code={ this.props.code } userCount={ this.state.users.length } allPlayersIn={ this.allPlayersIn.bind(this) }/>
@@ -109,12 +118,12 @@ class Home extends React.Component {
     }
 
     if(this.state.action == 'answersComplete'){
-      screen = <Points/>
+      screen = <Points nextQuestion={ this.allPlayersIn.bind(this) }/>
     }
-
+    console.log('HomeRender', this.state.action, this.state.questionCount)
     return <div>
       { this.props.code && screen}
-      <UserList users={ this.state.users } activeUser={ this.state.userForCategory } currentLies={ this.state.currentLies } currentAnswers={this.state.currentAnswers} action={ this.state.action }/>
+      <UserList users={ this.state.users } activeUser={ this.state.userForCategory } currentLies={ this.state.currentLies } userAnswers={this.state.userAnswers} action={ this.state.action }/>
     </div>;
   }
 }

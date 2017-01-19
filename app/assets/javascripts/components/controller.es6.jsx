@@ -32,7 +32,7 @@ class Controller extends React.Component {
         userForCategory: data.user
       })
     }
-    if(action == 'newLie'){
+    if(action == 'newLie' && data.user == this.state.user.id){
       this.setState({
         action: action,
         userForCategory: data.user
@@ -44,10 +44,18 @@ class Controller extends React.Component {
         currentAnswers: data.answers
       })
     }
-    if(action == 'newAnswer'){
+    if(action == 'newAnswer' && data.user == this.state.user.id){
       this.setState({
         action: action,
-        currentAnswers: data.answers
+        answeredUsers: data.answers
+      })
+    }
+
+    if(action == 'answersComplete'){
+      console.log('answersComplete', data.users, JSON.parse(data.users))
+      this.setState({
+        action: action,
+        users: JSON.parse(data.users)
       })
     }
   }
@@ -62,7 +70,7 @@ class Controller extends React.Component {
         },
         disconnected: function() {},
         received: function(data) {
-          console.log('Controller Received', data.action, data)
+          console.log('Controller Received', that.state.user && that.state.user.id, data.action, data)
           that.handleReceivedData(data)
         }
       });
@@ -97,9 +105,13 @@ class Controller extends React.Component {
     if(this.state.action == 'newQuestion' || this.state.action == 'newLie'){
       screen = <Lie question={ this.state.currentQuestion.question } submitLie={ this.submitLie.bind(this) }/>
     }
-    if(this.state.action == 'liesComplete'){
+    if(this.state.action == 'liesComplete' || this.state.action == 'newAnswer'){
       screen = <Question question={ this.state.currentQuestion.question } action={ this.state.action } answers={ this.state.currentAnswers } answered={this.submitAnswer.bind(this)}/>
     }
+    if(this.state.action == 'answersComplete' && this.state.users){
+      screen = <Points users={ this.state.users }/>
+    }
+    console.log('ControllerRender', this.state.action)
     return <div id='controller'>
       { screen }
     </div>;

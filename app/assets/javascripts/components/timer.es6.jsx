@@ -24,8 +24,9 @@ class Timer extends React.Component {
 
   update(){
     if (this.state.progress > 99) {
-      this.setState({progress: 100, intervalId: null})
-      this.clear.bind(this)
+      this.clear();
+      this.setState({progress: 100, intervalId: null});
+      this.props.complete();
     }
     else{
       let stepSize = 10*this.state.updateMiliseconds/(this.props.seconds*100)

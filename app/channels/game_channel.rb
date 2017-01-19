@@ -18,9 +18,9 @@ class GameChannel < ApplicationCable::Channel
 
   def start(users)
     users = User.find(users["users"])
-    game = Game.create(code: params[:room])
+    game = Game.find_or_create_by(code: params[:room])
     users.each{|user|user.update_attributes(game_id: game.id)}
-    questions = Question.limit(5).order("RANDOM()")
+    questions = Question.where.not(id: game.question_ids).limit(5).order("RANDOM()")
     ActionCable.server.broadcast "game_#{params[:room]}", action: 'start', questions: questions.map{|q| {id: q.id, name: q.category}}, user: users.sample.id, users: users.map(&:to_json)
   end
 
@@ -40,13 +40,19 @@ class GameChannel < ApplicationCable::Channel
     end
   end
 
+  def complete(data)
+    game = Game.find_by(code: params[:room])
+    ActionCable.server.broadcast "game_#{params[:room]}", action: 'liesComplete', answers: game.answers(@@lies).shuffle
+  end
+
 
   def answer(data)
     ActionCable.server.broadcast "game_#{params[:room]}", action: 'newAnswer', user: data['user_id']
     game = Game.find_by(code: params[:room])
     @@answers[data['user_id']] = data['text']
     if game.all_answered?(@@answers)
-      ActionCable.server.broadcast "game_#{params[:room]}", action: 'answersComplete'
+      points = game.calculate_points(@@lies, @@answers)
+      ActionCable.server.broadcast "game_#{params[:room]}", action: 'answersComplete', users: game.users.to_json, points: points
     end
   end
 

@@ -1,10 +1,4 @@
 .row
   .columns
     #game
-      #categories
-      #question
-        .category
-        .text
-      %ul#answers
-      %ul#userList{ data: { code: @code, users: [] } }
       = react_component('Home', code: @code)
