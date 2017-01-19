@@ -1,6 +1,6 @@
 class User extends React.Component {
   render () {
-    return <div className={ `a-user as-${this.props.status}` }>
+    return <li className={ `a-user as-${this.props.status}` }>
       <div className='a-user--name'>
         { this.props.data.name }
       </div>
@@ -8,6 +8,6 @@ class User extends React.Component {
         { this.props.data.points || 0 }
         { ' Punkte' }
       </div>
-    </div>;
+    </li>;
   }
 }

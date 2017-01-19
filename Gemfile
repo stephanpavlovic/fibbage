@@ -28,6 +28,8 @@ gem 'react-rails'
 
 gem 'autoprefixer-rails'
 gem 'foundation-rails'
+
+gem 'rails_12factor', group: [:production, :staging]
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password

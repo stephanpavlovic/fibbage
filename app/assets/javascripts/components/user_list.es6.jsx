@@ -16,7 +16,7 @@ class UserList extends React.Component {
     )
     return <div>
       { this.props.users.length > 0 && <h2>Spielstand</h2> }
-      <ul>
+      <ul className='a-user-list'>
         { list }
       </ul>
       { this.props.users.length == 0 && <div className='a-notice'>Warten auf den ersten Spieler</div> }

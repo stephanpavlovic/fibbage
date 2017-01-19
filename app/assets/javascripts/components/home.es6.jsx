@@ -121,9 +121,9 @@ class Home extends React.Component {
       screen = <Points nextQuestion={ this.allPlayersIn.bind(this) }/>
     }
     console.log('HomeRender', this.state.action, this.state.questionCount)
-    return <div>
-      { this.props.code && screen}
-      <UserList users={ this.state.users } activeUser={ this.state.userForCategory } currentLies={ this.state.currentLies } userAnswers={this.state.userAnswers} action={ this.state.action }/>
+    return <div className='b-layout'>
+      { this.props.code && <div className='b-layout--main'> { screen }</div>}
+      <div className='b-layout--user-list'><UserList users={ this.state.users } activeUser={ this.state.userForCategory } currentLies={ this.state.currentLies } userAnswers={this.state.userAnswers} action={ this.state.action }/></div>
     </div>;
   }
 }
