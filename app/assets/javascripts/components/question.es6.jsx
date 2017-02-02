@@ -6,7 +6,9 @@ class Question extends React.Component {
       const that = this;
       this.props.answers.forEach(function(answer, index){
         if(that.props.answered){
-          answers.push(<li key={index} onClick={that.props.answered.bind(this, answer)} className='a-question--answer as-interactive'>{ answer }</li>)
+          if(answer != that.props.lie){
+            answers.push(<li key={index} onClick={that.props.answered.bind(this, answer)} className='a-question--answer as-interactive'>{ answer }</li>)
+          }
         }else{
           answers.push(<li key={index} className='a-question--answer'>{ answer }</li>)
         }

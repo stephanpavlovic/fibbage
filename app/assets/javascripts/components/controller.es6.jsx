@@ -106,10 +106,10 @@ class Controller extends React.Component {
       screen = <Lie question={ this.state.currentQuestion.question } submitLie={ this.submitLie.bind(this) }/>
     }
     if(this.state.action == 'liesComplete' || this.state.action == 'newAnswer'){
-      screen = <Question question={ this.state.currentQuestion.question } action={ this.state.action } answers={ this.state.currentAnswers } answered={this.submitAnswer.bind(this)}/>
+      screen = <Question question={ this.state.currentQuestion.question } action={ this.state.action } answers={ this.state.currentAnswers } answered={this.submitAnswer.bind(this)} lie={this.state.lied}/>
     }
     if(this.state.action == 'answersComplete' && this.state.users){
-      screen = <Points users={ this.state.users }/>
+      screen = <Points origin='controller' users={ this.state.users }/>
     }
     console.log('ControllerRender', this.state.action)
     return <div id='controller'>

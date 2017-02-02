@@ -1,0 +1,44 @@
+@keyframes fade
+  0%
+    opacity: 0
+  100%
+    opacity: 1
+
+@keyframes scaleFade
+  0%
+    opacity: 0
+    transform: scale(4)
+  100%
+    opacity: 1
+    transform: scale(1)
+
+.a-lie
+  border: 2px solid black
+  padding: 5px 10px
+  margin-bottom: 50px
+  height: 60px
+  opacity: 0
+  animation-name: fade
+  animation-duration: 0.5s
+  animation-timing-function: ease-in-out
+  animation-delay: 1s
+  animation-fill-mode: forwards
+  .a-lie--text
+    font-size: 30px
+    text-align: center
+  .a-lie--users
+    display: flex
+    justify-content: space-around
+    .a-lie--user
+      border: 1px solid black
+      padding: 5px 20px
+      background: white
+      position: relative
+      top: -5px
+      animation-name: scaleFade
+      animation-duration: 0.2s
+      animation-timing-function: ease-in-out
+      animation-fill-mode: forwards
+      opacity: 0
+  &.as-truth
+    border-color: green

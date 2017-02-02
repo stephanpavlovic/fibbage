@@ -117,10 +117,29 @@ class Home extends React.Component {
       screen = <CategoryOptions questions={ this.state.questions } user={ this.state.userForCategory }/>
     }
 
-    if(this.state.action == 'answersComplete'){
-      screen = <Points nextQuestion={ this.allPlayersIn.bind(this) }/>
+    if(true) {//(this.state.action == 'answersComplete'){
+      let points = {
+        "lies": {
+          "Gucci": [
+            263,264
+          ],
+          "Test": [],
+          "Something": [
+            265
+          ]
+        },
+        "truth": [
+          266
+        ],
+        "user": {
+          "264": 500,
+          "265": 0,
+          "266": 1500
+        }
+      }
+      screen = <Points origin='home' points={ points } users={ this.state.users } nextQuestion={ this.allPlayersIn.bind(this) }/>
     }
-    console.log('HomeRender', this.state.action, this.state.questionCount)
+    console.log('HomeRender', this.state.action, screen)
     return <div className='b-layout'>
       { this.props.code && <div className='b-layout--main'> { screen }</div>}
       <div className='b-layout--user-list'><UserList users={ this.state.users } activeUser={ this.state.userForCategory } currentLies={ this.state.currentLies } userAnswers={this.state.userAnswers} action={ this.state.action }/></div>
