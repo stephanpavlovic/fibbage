@@ -117,7 +117,7 @@ class Home extends React.Component {
       screen = <CategoryOptions questions={ this.state.questions } user={ this.state.userForCategory }/>
     }
 
-    if(true) {//(this.state.action == 'answersComplete'){
+    if(this.state.action == 'answersComplete'){//(true) {//(this.state.action == 'answersComplete'){
       let points = {
         "lies": {
           "Gucci": [
@@ -137,7 +137,7 @@ class Home extends React.Component {
           "266": 1500
         }
       }
-      screen = <Points origin='home' points={ points } users={ this.state.users } nextQuestion={ this.allPlayersIn.bind(this) }/>
+      screen = <Points origin='home' points={ this.state.points } users={ this.state.users } nextQuestion={ this.allPlayersIn.bind(this) }/>
     }
     console.log('HomeRender', this.state.action, screen)
     return <div className='b-layout'>
